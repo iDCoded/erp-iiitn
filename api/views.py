@@ -1,6 +1,34 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-# Create your views here
-# make the view
-def home(request):
-    return HttpResponse("<h1> Hello </h1>")
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
+
+from .serializers import UserSerializer
+
+# POST request for login
+@api_view(['POST'])
+def login(request):
+    return  Response({})
+
+# POST request for signing up
+@api_view(['POST'])
+def signup(request):
+    serializer = UserSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+
+        user = User.objects.get(username=request.data['username'])
+        user.set_password(request.data['password'])
+        user.save()
+        token = Token.objects.create(user=user)
+        return Response({
+            "token": token.key,
+            "user": serializer.data
+        })
+    return  Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# GET request for validating token
+@api_view(['GET'])
+def validate_token(request):
+    return  Response({})
