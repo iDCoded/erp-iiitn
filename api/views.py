@@ -43,6 +43,13 @@ def signup(request):
     return  Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # GET request for validating token
+
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
 @api_view(['GET'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def validate_token(request):
-    return  Response({})
+    return Response("Passed for {}".format(request.user.username))
