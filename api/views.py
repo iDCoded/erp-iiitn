@@ -37,8 +37,13 @@ def signup(request):
         serializer.save()
         # Fetch user by their username
         user = User.objects.get(username=request.data['username'])
+
+        # Set user information from the request
         user.set_password(request.data['password'])  # Hash the user password
-        user.save()  # and save it
+        user.first_name = request.data['firstName']
+        user.last_name = request.data['lastName']
+        user.save()  # Save the hashed password
+
         token = Token.objects.create(user=user)  # Generate token for user
         return Response({
             "token": token.key,
