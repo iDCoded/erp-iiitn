@@ -17,9 +17,12 @@ def login(request):
     if not user.check_password(request.data['password']):
         return Response({"detail": "No User matches the given query."}, status=status.HTTP_404_NOT_FOUND)
 
+    # Get the token and instantiate user serializer.
+    # Create token in case of missing token.
     token, created = Token.objects.get_or_create(user=user)
     serializer = UserSerializer(instance=user)
 
+    # Return token key and user object
     return  Response({
         "token": token.key,
         "user": serializer.data
@@ -28,14 +31,14 @@ def login(request):
 # POST request for signing up
 @api_view(['POST'])
 def signup(request):
-    serializer = UserSerializer(data=request.data)
+    serializer = UserSerializer(data=request.data)  # Create user serializer based on request data
     if serializer.is_valid():
         serializer.save()
-
+        # Fetch user by their username
         user = User.objects.get(username=request.data['username'])
-        user.set_password(request.data['password'])
-        user.save()
-        token = Token.objects.create(user=user)
+        user.set_password(request.data['password'])  # Hash the user password
+        user.save()  # and save it
+        token = Token.objects.create(user=user)  # Generate token for user
         return Response({
             "token": token.key,
             "user": serializer.data
