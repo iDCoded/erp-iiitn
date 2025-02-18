@@ -1,3 +1,4 @@
+from django.template.context_processors import request
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,7 +11,7 @@ from .serializers import UserSerializer
 # POST request for login
 @api_view(['POST'])
 def login(request):
-    user = get_object_or_404(User, username=request.data['username'])
+    user = get_object_or_404(User, email=request.data['email'])
 
     # Throw the same 404 (Not Found) error as incorrect username
     # When the password is incorrect to avoid disclosing invalid field.
