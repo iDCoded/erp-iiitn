@@ -61,4 +61,10 @@ from rest_framework.permissions import IsAuthenticated
 @authentication_classes([SessionAuthentication, TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def validate_token(request):
-    return Response("Passed for {}".format(request.user.username))
+    user = request.user
+
+    return Response({
+        "email": user.email,
+        "firstName": user.first_name,
+        "lastName": user.last_name,
+    })
