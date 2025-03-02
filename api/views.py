@@ -1,12 +1,13 @@
 from django.template.context_processors import request
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, PaymentsSerializer, TransactionsSerializer
+from .models import Payments, Transactions
 
 # POST request for login
 @api_view(['POST'])
@@ -68,3 +69,15 @@ def validate_token(request):
         "first_name": user.first_name,
         "last_name": user.last_name,
     })
+
+
+# Retrieve all payments
+class PaymentsListView(generics.ListAPIView):
+    queryset = Payments.objects.all()
+    serializer_class = PaymentsSerializer
+
+
+# Retrieve all Transactions
+class TransactionsListView(generics.ListAPIView):
+    queryset = Transactions.objects.all()
+    serializer_class = TransactionsSerializer
