@@ -65,6 +65,7 @@ def validate_token(request):
     user = request.user
 
     return Response({
+        "id": user.id,
         "email": user.email,
         "first_name": user.first_name,
         "last_name": user.last_name,
@@ -94,6 +95,22 @@ def upload_payment_form(request):
         return Response({
             "message": "Payment form submitted successfully!",
             "payment": PaymentsSerializer(instance).data  # Serialize saved instance
+        }, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def upload_transaction_form(request):
+    serializer = TransactionsSerializer(data=request.data)
+
+    if serializer.is_valid():
+        instance = serializer.save()
+        return Response({
+            "message": "Transaction submitted successfully!",
+            "transaction": TransactionsSerializer(instance).data
         }, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
