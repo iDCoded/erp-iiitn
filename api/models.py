@@ -15,7 +15,7 @@ class Transactions(models.Model):
     no_of_payments = models.IntegerField(default=1)
     transaction_id = models.TextField()
     payment_pic = models.ImageField()
-    verified = models.BooleanField()
+    verified = models.BooleanField(default=False)
     payment_datetime = models.DateTimeField()
     
 
