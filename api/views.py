@@ -81,3 +81,19 @@ class PaymentsListView(generics.ListAPIView):
 class TransactionsListView(generics.ListAPIView):
     queryset = Transactions.objects.all()
     serializer_class = TransactionsSerializer
+
+
+@api_view(['POST'])
+@authentication_classes([SessionAuthentication, TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def upload_payment_form(request):
+    serializer = PaymentsSerializer(data=request.data)
+
+    if serializer.is_valid():
+        instance = serializer.save()  # Save to the database
+        return Response({
+            "message": "Payment form submitted successfully!",
+            "payment": PaymentsSerializer(instance).data  # Serialize saved instance
+        }, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
