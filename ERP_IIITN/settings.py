@@ -139,3 +139,13 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),  # Set to 15 minutes
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),  # Set refresh token expiry to 30 days
+    "ROTATE_REFRESH_TOKENS": True,  # New refresh token is issued when used
+    "BLACKLIST_AFTER_ROTATION": True,
+    "AUTH_HEADER_TYPES": ("Bearer",),  # Accepts Bearer tokens
+}
