@@ -21,6 +21,20 @@ class UserRegistrationView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UserProfileView(APIView):
+    permission_classes = [permissions.IsAuthenticated]  # Require authentication
+
+    def get(self, request):
+        user = request.user  # Get the user from the JWT token
+
+        return Response({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+        })
+
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
     serializer_class = StudentSerializer
