@@ -1,14 +1,19 @@
-from django.urls import re_path
-from .views import login, signup, validate_token, PaymentsListView, TransactionsListView, upload_payment_form, \
-    upload_transaction_form
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from .views import StudentViewSet, FeeSubmissionViewSet, TransactionViewSet, ProofUploadViewSet, AdminViewSet, \
+    UserRegistrationView
+
+router = DefaultRouter()
+router.register(r'students', StudentViewSet)
+router.register(r'fee_submissions', FeeSubmissionViewSet)
+router.register(r'transactions', TransactionViewSet)
+router.register(r'proof_uploads', ProofUploadViewSet)
+router.register(r'admins', AdminViewSet)
 
 urlpatterns = [
-    re_path('login/' , login , name='login'), # /{{base_url}}/api/login/
-    re_path('signup/', signup, name='signup'), # /{{base_url}}/api/signup/
-    re_path('token', validate_token, name='validate'),  # /{{base_url}}/api/token/
-    re_path('payments', PaymentsListView.as_view(), name="payments-list"),  # /{{base_url}}/api/payments/
-    re_path('transactions', TransactionsListView.as_view(), name="transactions-list"),
-    # /{{base_url}}/api/transactions/
-    re_path('submit/payment', upload_payment_form, name="submit_payment_form"),
-    re_path('submit/transaction', upload_transaction_form, name="submit_transaction_form")
+    path('', include(router.urls)),
+    path('auth/register/', UserRegistrationView.as_view(), name='register'),
+    path('auth/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
